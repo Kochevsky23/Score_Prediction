@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Score Prediction App</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f8fb;
+        }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-box {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            margin-bottom: 1.5rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, input[type=text], button {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .predictions {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            max-width: 500px;
+            margin: auto;
+        }
+        .game {
+            margin-bottom: 1rem;
+        }
+    </style>
+    <script>
+      const allLeagues = {
+        soccer: ["Premier League", "La Liga", "Bundesliga", "Serie A", "Ligue 1"],
+        basketball: ["NBA", "EuroLeague", "ACB", "LNB Pro A"]
+      };
+      function updateLeagues() {
+        const sport = document.getElementById('sport').value;
+        const leagueSelect = document.getElementById('league');
+        leagueSelect.innerHTML = '';
+        allLeagues[sport].forEach(l => {
+          const opt = document.createElement('option');
+          opt.value = l;
+          opt.textContent = l;
+          leagueSelect.appendChild(opt);
+        });
+      }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1>Sports Score Prediction</h1>
+            <form method="post">
+                <label for="sport">Sport:</label>
+                <select name="sport" id="sport" required onchange="updateLeagues()">
+                    <option value="soccer" {% if sport == 'soccer' %}selected{% endif %}>Soccer</option>
+                    <option value="basketball" {% if sport == 'basketball' %}selected{% endif %}>Basketball</option>
+                </select>
+                <label for="league">League:</label>
+                <select name="league" id="league" required>
+                  {% for l in leagues %}
+                    <option value="{{ l }}" {% if l == league %}selected{% endif %}>{{ l }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit">Get Predictions</button>
+            </form>
+        </div>
+        {% if predictions %}
+        <div class="predictions">
+            <h2>Predictions for next week ({{ sport|capitalize }}, {{ league }})</h2>
+            {% for game in predictions %}
+            <div class="game">
+                <strong>{{ game.home }} vs {{ game.away }}</strong><br>
+                Prediction: {{ game.prediction }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
